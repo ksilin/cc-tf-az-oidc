@@ -1,0 +1,26 @@
+# terraform.tfvars - Step 2 OAuth Authentication
+# Copy this to terraform.tfvars and fill in your actual values
+
+# OAuth Authentication for Terraform Provider (required)
+oauth_external_token_url      = "https://login.microsoftonline.com/0893715b-959b-4906-a185-2789e1ead045/oauth2/v2.0/token"
+oauth_external_client_id      = "YOUR_TERRAFORM_AZURE_APP_CLIENT_ID"
+oauth_external_client_secret  = "YOUR_TERRAFORM_AZURE_APP_CLIENT_SECRET"
+
+# OAuth Scope (undocumented provider parameter - fixes Azure AD scope issue)
+oauth_external_token_scope    = "https://graph.microsoft.com/.default"
+
+# Existing Identity Provider (must match step 1)
+existing_identity_provider_id = "op-4N"  # or "op-q0G"
+
+# Environment (must match step 1)
+environment_id = "env-nvv5xz"
+
+# Azure Application for Connector Operations
+azure_app_client_id = "YOUR_CONNECTOR_AZURE_APP_CLIENT_ID"
+
+# Optional: Use separate apps for Terraform vs connectors
+# use_separate_connector_app = true
+
+# Note: If use_separate_connector_app = false (default), 
+# the same Azure app (oauth_external_client_id) will be used for both 
+# Terraform provider auth and connector operations

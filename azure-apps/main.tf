@@ -49,18 +49,18 @@ resource "azuread_application_password" "terraform_app_secret" {
   end_date_relative = "8760h" # 1 year
 }
 
-# Application for Connector Operations (optional - only if using separate apps)
+# Application for Connector Management (optional - only if using separate apps)
 resource "azuread_application" "connector_app" {
   count = var.create_separate_connector_app ? 1 : 0
   
-  display_name = "az_connect_demo-Confluent-Connector-Provisioner"
-  description  = "Azure AD application for Confluent connector provisioning operations"
+  display_name = "az_connect_demo-Connector-Manager"
+  description  = "Azure AD application for Confluent connector management"
   
   api {
     requested_access_token_version = 2
     
     oauth2_permission_scope {
-      admin_consent_description  = "Allow provisioning and management of Confluent Cloud connectors"
+      admin_consent_description  = "Allow management of Confluent Cloud connectors"
       admin_consent_display_name = "Confluent Connector Management"
       enabled                    = true
       id                         = "87654321-4321-8765-dcba-210fedcba987"

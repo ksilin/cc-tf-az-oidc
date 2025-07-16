@@ -24,7 +24,7 @@ resource "confluent_identity_pool" "terraform_bootstrap" {
   display_name   = "Terraform-Infrastructure-Pool-OAuth-Bootstrap"
   description    = "Bootstrap identity pool for Terraform OAuth authentication"
   identity_claim = "claims.sub"
-  filter         = "has(claims.sub)"
+  filter         = "claims.azp == \"5b6f2fa6-b55f-4189-b2d8-d5acde91b2d8\""
 }
 
 # Environment admin role for Terraform pool

@@ -19,14 +19,9 @@ output "cluster_rest_endpoint" {
   value       = module.confluent_identity_pools.cluster_rest_endpoint
 }
 
-output "api_endpoints" {
-  description = "Key API endpoints for connector management"
-  value       = module.confluent_identity_pools.api_endpoints
-}
-
-output "required_azure_scopes" {
-  description = "Required Azure AD scopes for token acquisition"
-  value       = module.confluent_identity_pools.required_azure_scopes
+output "connect_api_endpoint" {
+  description = "API endpoint for connector management"
+  value       = module.confluent_identity_pools.connect_api_endpoint
 }
 
 # API Key deployment specific outputs

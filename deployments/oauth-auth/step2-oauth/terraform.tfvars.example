@@ -9,17 +9,17 @@ oauth_external_client_secret  = "YOUR_TERRAFORM_AZURE_APP_CLIENT_SECRET"
 # OAuth Scope (undocumented provider parameter - fixes Azure AD scope issue)
 oauth_external_token_scope    = "https://graph.microsoft.com/.default"
 
-# Existing Identity Provider (must match step 1)
-existing_identity_provider_id = "op-4N"  # or "op-q0G"
+# Confluent Cloud Identity Provider ID (assuming it already exists)
+existing_identity_provider_id = "YOUR_CONFLUENT_CLOUD_ID_PROVIDER_ID"
 
-# Environment (must match step 1)
-environment_id = "env-nvv5xz"
+# Confluent Cloud Environment ID
+environment_id = "YOUR_CONFLUENT_CLOUD_ENV_ID"
 
 # Azure Application for Connector Operations
 azure_app_client_id = "YOUR_CONNECTOR_AZURE_APP_CLIENT_ID"
 
 # Optional: Use separate apps for Terraform vs connectors
-# use_separate_connector_app = true
+use_separate_connector_app = true
 
 # Note: If use_separate_connector_app = false (default), 
 # the same Azure app (oauth_external_client_id) will be used for both 

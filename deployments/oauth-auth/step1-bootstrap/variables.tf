@@ -18,7 +18,7 @@ variable "oauth_external_client_id" {
 }
 
 variable "existing_identity_provider_id" {
-  description = "Existing OIDC identity provider ID (op-4N or op-q0G)"
+  description = "Existing OIDC identity provider ID"
   type        = string
 }
 

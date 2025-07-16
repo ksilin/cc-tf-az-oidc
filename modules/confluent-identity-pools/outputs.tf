@@ -36,14 +36,25 @@ output "cluster_rest_endpoint" {
 }
 
 # Identity Pool Information
+output "connector_manager_pool_id" {
+  description = "Connector manager identity pool ID"
+  value       = confluent_identity_pool.connector_manager.id
+}
+
+output "connector_manager_principal_id" {
+  description = "Connector manager principal ID for verification"
+  value       = "User:${confluent_identity_pool.connector_manager.id}"
+}
+
+# Legacy outputs for backward compatibility
 output "azure_provisioning_pool_id" {
-  description = "Azure provisioning identity pool ID"
-  value       = confluent_identity_pool.azure_provisioning.id
+  description = "[DEPRECATED] Use connector_manager_pool_id instead"
+  value       = confluent_identity_pool.connector_manager.id
 }
 
 output "azure_provisioning_principal_id" {
-  description = "Azure provisioning principal ID for verification"
-  value       = "User:${confluent_identity_pool.azure_provisioning.id}"
+  description = "[DEPRECATED] Use connector_manager_principal_id instead"
+  value       = "User:${confluent_identity_pool.connector_manager.id}"
 }
 
 output "terraform_pool_id" {
@@ -56,23 +67,11 @@ output "terraform_principal_id" {
   value       = var.create_terraform_pool ? "User:${confluent_identity_pool.terraform_provisioner[0].id}" : null
 }
 
-# Demo Topic Information
-output "demo_topic_name" {
-  description = "Demo topic name (if created)"
-  value       = var.create_demo_topic ? confluent_kafka_topic.demo_topic[0].topic_name : null
-}
 
-# API Endpoints
-output "api_endpoints" {
-  description = "Key API endpoints for connector management"
+# Connect API Endpoint
+output "connect_api_endpoint" {
+  description = "API endpoint for connector management"
   value = {
     connectors   = "https://api.confluent.cloud/connect/v1/environments/${var.environment_id}/clusters/${confluent_kafka_cluster.main.id}/connectors"
-    environments = "https://api.confluent.cloud/org/v2/environments"
-    clusters     = "https://api.confluent.cloud/cmk/v2/clusters"
   }
-}
-
-output "required_azure_scopes" {
-  description = "Required Azure AD scopes for token acquisition"
-  value       = ["https://api.confluent.cloud/.default"]
 }

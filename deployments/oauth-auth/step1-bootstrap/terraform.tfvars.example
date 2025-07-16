@@ -8,11 +8,8 @@ confluent_cloud_api_secret = "YOUR_CONFLUENT_API_SECRET"
 # OAuth configuration for Terraform provider
 oauth_external_client_id = "YOUR_TERRAFORM_AZURE_APP_CLIENT_ID"
 
-# Note: Using Microsoft Graph scope to avoid Azure AD "resource not found" error
-# oauth_external_token_scope = "https://graph.microsoft.com/.default"
+# Confluent Cloud Identity Provider ID (assuming it already exists)
+existing_identity_provider_id = "YOUR_CONFLUENT_CLOUD_ID_PROVIDER_ID"
 
-# Existing Identity Provider (choose one from your list)
-existing_identity_provider_id = "op-4N"  # or "op-q0G"
-
-# Environment (update with your environment ID)
-environment_id = "env-nvv5xz"
+# Confluent Cloud Environment ID
+environment_id = "YOUR_CONFLUENT_CLOUD_ENV_ID"

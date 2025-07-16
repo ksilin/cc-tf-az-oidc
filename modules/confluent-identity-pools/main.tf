@@ -3,19 +3,19 @@ data "confluent_environment" "main" {
   id = var.environment_id
 }
 
-# 1. Create Identity Pool for Azure Application (Connector Operations)
-resource "confluent_identity_pool" "azure_provisioning" {
+# 1. Create Identity Pool for Azure Application (Connector Management)
+resource "confluent_identity_pool" "connector_manager" {
   identity_provider {
     id = var.identity_provider_id
   }
   
-  display_name   = var.provisioning_pool_name
-  description    = var.provisioning_pool_description
+  display_name   = var.connector_manager_pool_name != null ? var.connector_manager_pool_name : (var.provisioning_pool_name != null ? var.provisioning_pool_name : "Azure-Connector-Manager-Pool")
+  description    = var.connector_manager_pool_description != null ? var.connector_manager_pool_description : (var.provisioning_pool_description != null ? var.provisioning_pool_description : "Identity pool for Azure application to manage Confluent Cloud connectors")
   identity_claim = var.identity_claim
-  filter         = var.provisioning_filter != null ? var.provisioning_filter : "claims.azp == '${var.azure_app_client_id}'"
+  filter         = var.connector_manager_filter != null ? var.connector_manager_filter : (var.provisioning_filter != null ? var.provisioning_filter : "claims.azp == \"${var.azure_app_client_id}\"")
 }
 
-# 2. Create Identity Pool for Terraform Provider (Optional, for OAuth setup)
+# 2. Create Identity Pool for Terraform Provider (Infrastructure Provisioning)
 resource "confluent_identity_pool" "terraform_provisioner" {
   count = var.create_terraform_pool ? 1 : 0
   
@@ -26,7 +26,7 @@ resource "confluent_identity_pool" "terraform_provisioner" {
   display_name   = var.terraform_pool_name
   description    = "Identity pool for Terraform infrastructure management via OAuth"
   identity_claim = var.identity_claim
-  filter         = "claims.azp == '${var.terraform_client_id}'"
+  filter         = "claims.azp == \"${var.terraform_client_id}\""
 }
 
 # 3. Create Kafka Cluster
@@ -43,30 +43,18 @@ resource "confluent_kafka_cluster" "main" {
   }
 }
 
-# 4. RBAC Role Bindings for Azure Application (Connector Operations)
+# 4. RBAC Role Bindings for Azure Application (Connector Management)
 
-# CloudClusterAdmin - Required for connector creation
-resource "confluent_role_binding" "azure_provisioning_cluster_admin" {
-  principal   = "User:${confluent_identity_pool.azure_provisioning.id}"
-  role_name   = "CloudClusterAdmin"
-  crn_pattern = confluent_kafka_cluster.main.rbac_crn
-}
 
 # ConnectManager - For connector management operations (all connectors)
-resource "confluent_role_binding" "azure_provisioning_connect_manager" {
-  principal   = "User:${confluent_identity_pool.azure_provisioning.id}"
+resource "confluent_role_binding" "connector_manager_connect_manager" {
+  principal   = "User:${confluent_identity_pool.connector_manager.id}"
   role_name   = "ConnectManager"
   crn_pattern = "${confluent_kafka_cluster.main.rbac_crn}/connector=*"
 }
 
-# DeveloperWrite - For topics that connectors will write to
-resource "confluent_role_binding" "azure_provisioning_topic_write" {
-  principal   = "User:${confluent_identity_pool.azure_provisioning.id}"
-  role_name   = "DeveloperWrite"
-  crn_pattern = "${confluent_kafka_cluster.main.rbac_crn}/kafka=${confluent_kafka_cluster.main.id}/topic=connector-*"
-}
 
-# 5. RBAC Role Bindings for Terraform Identity Pool (if enabled)
+# 5. RBAC Role Bindings for Terraform Identity Pool (Infrastructure Provisioning)
 resource "confluent_role_binding" "terraform_environment_admin" {
   count = var.create_terraform_pool ? 1 : 0
   
@@ -75,18 +63,5 @@ resource "confluent_role_binding" "terraform_environment_admin" {
   crn_pattern = data.confluent_environment.main.resource_name
 }
 
-# 6. Demo Topic (optional)
-resource "confluent_kafka_topic" "demo_topic" {
-  count = var.create_demo_topic ? 1 : 0
-  
-  kafka_cluster {
-    id = confluent_kafka_cluster.main.id
-  }
-  
-  topic_name       = var.demo_topic_name
-  partitions_count = 3
-  rest_endpoint    = confluent_kafka_cluster.main.rest_endpoint
-  
-  # Topic creation will depend on deployment type (API key vs OAuth)
-  # Credentials will be handled in the deployment-specific configurations
-}
+# NOTE: Topics should be created in specific deployments, not in this module
+# This module focuses on identity pools, clusters, and RBAC - not application topics

@@ -22,16 +22,29 @@ variable "terraform_client_id" {
 }
 
 # Identity Pool Configuration
-variable "provisioning_pool_name" {
-  description = "Display name for the provisioning identity pool"
+variable "connector_manager_pool_name" {
+  description = "Display name for the connector manager identity pool"
   type        = string
-  default     = "Azure-Connector-Provisioning-Pool"
+  default     = "Azure-Connector-Manager-Pool"
+}
+
+variable "connector_manager_pool_description" {
+  description = "Description for the connector manager identity pool"
+  type        = string
+  default     = "Identity pool for Azure application to manage Confluent Cloud connectors"
+}
+
+# Legacy variables for backward compatibility
+variable "provisioning_pool_name" {
+  description = "[DEPRECATED] Use connector_manager_pool_name instead"
+  type        = string
+  default     = null
 }
 
 variable "provisioning_pool_description" {
-  description = "Description for the provisioning identity pool"
+  description = "[DEPRECATED] Use connector_manager_pool_description instead"
   type        = string
-  default     = "Identity pool for Azure application to provision Confluent Cloud connectors"
+  default     = null
 }
 
 variable "terraform_pool_name" {
@@ -46,8 +59,15 @@ variable "identity_claim" {
   default     = "claims.sub"
 }
 
+variable "connector_manager_filter" {
+  description = "Filter expression to match your Azure application for connector management"
+  type        = string
+  default     = null
+}
+
+# Legacy variable for backward compatibility
 variable "provisioning_filter" {
-  description = "Filter expression to match your Azure application for connector operations"
+  description = "[DEPRECATED] Use connector_manager_filter instead"
   type        = string
   default     = null
 }
@@ -78,14 +98,3 @@ variable "create_terraform_pool" {
   default     = false
 }
 
-variable "create_demo_topic" {
-  description = "Whether to create a demo topic"
-  type        = bool
-  default     = true
-}
-
-variable "demo_topic_name" {
-  description = "Name for the demo topic"
-  type        = string
-  default     = "connector-demo-topic"
-}
